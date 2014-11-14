@@ -1,4 +1,4 @@
-require(['bundle.js'], function (run) {
-	console.log(run.foo('ss'));
-	console.log(run.bar('ss'));
+require(['bundle.js'], function (bundle) {
+	console.log(bundle.foo('foo'));
+	console.log(bundle.bar('bar'));
 });
