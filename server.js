@@ -1,5 +1,6 @@
 var http = require('http'); // For serving a basic web page.
 var mongoose = require("mongoose"); // The reason for this demo.
+var url = require('url');
 
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
@@ -79,10 +80,17 @@ http.createServer(function(req, res) {
 		'Content-Type' : 'text/plain'
 	});
 	//res.end('Hello World\n');
-	Movie.find({}, function(err, thor) {
-		if (err)
-			return console.error(err);
-		res.end(thor+"");
-	});
+	var url_parts = url.parse(req.url, true);
+	var name = url_parts.name;
+	// console.log(url_parts.query);
+	if(url_parts.query.name) {
+		 console.log(url_parts.query.name);
+		Movie.find({title:url_parts.query.name}, function(err, thor) {
+			if (err)
+				return console.error(err);
+			res.end(thor+"");
+		});
+	}
+		
 }).listen(theport);
 console.log('Server running');
