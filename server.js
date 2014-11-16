@@ -9,7 +9,7 @@ var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL
 // The http server will listen to an appropriate port, or default to
 // port 5000.
 var theport = process.env.PORT || 8080;
-
+var Movie;
 // Makes connection asynchronously. Mongoose will queue up database
 // operations and release them when the connection is complete.
 mongoose.connect(uristring, function(err, res) {
@@ -25,26 +25,52 @@ mongoose.connect(uristring, function(err, res) {
 		rating : String,
 		releaseYear : Number,
 		hasCreditCookie : Boolean
+	}, {
+		collection : 'movie'
 	});
 
 	// Compile a 'Movie' model using the movieSchema as the structure.
 	// Mongoose also creates a MongoDB collection called 'Movies' for these
 	// documents.
-	var Movie = mongoose.model('Movie', movieSchema);
-	/*
-	 * var thor = new Movie({ title : 'Alien', rating : 'R', releaseYear :
-	 * '1984' // Notice the use of a String rather than a // Number - Mongoose
-	 * will automatically convert // this for us. , hasCreditCookie : true });
-	 * 
-	 * thor.save(function(err, thor) { if (err) return console.error(err);
-	 * console.dir(thor); });
-	 */
+	Movie = mongoose.model('Movie', movieSchema, 'movie');
 
-	Movie.find({}, function(err, thor) {
-		if (err)
-			return console.error(err);
-		console.dir(thor);
-	});
+	var createNew = true;
+	if (createNew) {
+		Movie.remove({}, function(err) {
+			console.log('collection removed')
+			var thor = new Movie({
+				title : 'Thor',
+				rating : 'PG-13',
+				releaseYear : '2011', // Notice the use of a String rather
+										// than a
+				// Number - Mongoose will automatically convert
+				// this for us.
+				hasCreditCookie : true
+			});
+			thor.save(function(err, thor) {
+				if (err)
+					return console.error(err);
+				console.dir(thor);
+			});
+			
+			var alien = new Movie({
+				title : 'Alien',
+				rating : 'R',
+				releaseYear : '1984', // Notice the use of a String rather
+										// than a
+				// Number - Mongoose will automatically convert
+				// this for us.
+				hasCreditCookie : true
+			});
+			alien.save(function(err, thor) {
+				if (err)
+					return console.error(err);
+				console.dir(thor);
+			});
+
+			
+		});
+	}
 
 });
 
@@ -52,6 +78,11 @@ http.createServer(function(req, res) {
 	res.writeHead(200, {
 		'Content-Type' : 'text/plain'
 	});
-	res.end('Hello World\n');
+	//res.end('Hello World\n');
+	Movie.find({}, function(err, thor) {
+		if (err)
+			return console.error(err);
+		res.end(thor+"");
+	});
 }).listen(theport);
 console.log('Server running');
