@@ -1,6 +1,7 @@
 var http = require('http'); // For serving a basic web page.
 var mongoose = require("mongoose"); // The reason for this demo.
 var url = require('url');
+var qrImage = require('./qr_mod');
 
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
@@ -83,14 +84,16 @@ http.createServer(function(req, res) {
 	var url_parts = url.parse(req.url, true);
 	var name = url_parts.name;
 	// console.log(url_parts.query);
-	if(url_parts.query.name) {
+	/*if(url_parts.query.name) {
 		 console.log(url_parts.query.name);
 		Movie.find({title:url_parts.query.name}, function(err, thor) {
 			if (err)
 				return console.error(err);
 			res.end(thor+"");
 		});
-	}
+	}*/
+	qrImage.generate('http://blog.nodejitsu.com', 'png', res);	
 		
 }).listen(theport);
-console.log('Server running');
+console.log('Server running on port:'+theport);
+module.exports=function(){}
